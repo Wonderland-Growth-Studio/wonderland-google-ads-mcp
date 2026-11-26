@@ -3,3 +3,5 @@ include ads_mcp/*.json
 include ads_mcp/*.txt
 #include the bundled default tools configuration
 include ads_mcp/*.yaml
+#include the Wonderland icon set served at /favicon.ico and /brand/*
+include ads_mcp/brand/*
