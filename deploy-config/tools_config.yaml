@@ -1,0 +1,14 @@
+# Wonderland's deployment of this server (Railway, google-ads.mcp.wonderland.marketing).
+# Selected with GOOGLE_ADS_MCP_TOOLS_CONFIG=/app/deploy-config/tools_config.yaml.
+#
+# Read-only on purpose. The labels and assets namespaces can change live client
+# accounts (behind propose-and-confirm). The build the team used until November 2026
+# had no write tools, so turning them on is a decision, not a side effect of an
+# upgrade. To enable them, set both to true here, or drop GOOGLE_ADS_MCP_TOOLS_CONFIG
+# to use the package default (everything on).
+namespaces:
+  customers: true
+  search: true
+  metadata: true
+  labels: false
+  assets: false
