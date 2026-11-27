@@ -9,7 +9,7 @@ from importlib import resources
 
 from mcp import types
 from starlette.requests import Request
-from starlette.responses import Response
+from starlette.responses import HTMLResponse, Response
 
 ICON_PATH = "/brand/icon-512.png"
 
@@ -19,6 +19,32 @@ FILES = {
     "/brand/icon-192.png": ("icon-192.png", "image/png"),
     "/apple-touch-icon.png": ("icon-180.png", "image/png"),
 }
+
+
+# The page at "/". Claude shows a custom connector with the favicon Google has indexed for
+# its URL, not the serverInfo icon; with no page here Google falls back to the parent
+# domain's favicon, and every Wonderland connector looks the same. This page gives Google a
+# <link rel="icon"> to index for this host.
+HOME_HTML = """<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wonderland Google Ads · Wonderland</title>
+<meta name="description" content="Wonderland's Google Ads MCP server for Claude.">
+<link rel="icon" type="image/png" sizes="512x512" href="/brand/icon-512.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/brand/icon-192.png">
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>body{font:16px/1.5 system-ui,sans-serif;max-width:32rem;margin:15vh auto;padding:0 1rem;color:#1a1a1a}img{width:64px;height:64px;border-radius:14px}</style>
+</head>
+<body>
+<img src="/brand/icon-512.png" alt="">
+<h1>Wonderland Google Ads</h1>
+<p>A Wonderland MCP server. Add it in Claude as a custom connector at <code>/mcp</code>.</p>
+</body>
+</html>
+"""
 
 
 def read(name: str) -> bytes:
@@ -49,3 +75,8 @@ def register(server) -> None:
             )
 
         server.custom_route(path, methods=["GET", "HEAD"])(serve)
+
+    async def home(_: Request) -> Response:
+        return HTMLResponse(HOME_HTML, headers={"Cache-Control": "public, max-age=3600"})
+
+    server.custom_route("/", methods=["GET", "HEAD"])(home)

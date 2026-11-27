@@ -47,6 +47,10 @@ class BrandTest(unittest.TestCase):
                 self.assertEqual(r.status_code, 200, path)
                 self.assertEqual(r.headers["content-type"], media)
                 self.assertGreater(len(r.content), 100)
+            # The home page names the icon, so Google indexes this host's favicon for Claude.
+            home = c.get("/")
+            self.assertEqual(home.status_code, 200)
+            self.assertIn('href="/brand/icon-512.png"', home.text)
             self.assertEqual(c.post("/mcp", json={}).status_code, 401)
 
 
